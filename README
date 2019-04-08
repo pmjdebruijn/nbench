@@ -1,0 +1,6 @@
+nbench
+======
+
+Changes:
+ - New baseline: AMD K7 (Thunderbird) 1400 @ 1050mHz (10.5*100mHz) (index normalised for 1000mHz), 256K L2 full speed cache
+

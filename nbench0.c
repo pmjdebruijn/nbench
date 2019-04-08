@@ -69,11 +69,12 @@ time_t time_and_date;   /* Self-explanatory */
 struct tm *loctime;
 double bmean;           /* Benchmark mean */
 double bstdev;          /* Benchmark stdev */
-double lx_memindex;     /* Linux memory index (mainly integer operations)*/
-double lx_intindex;     /* Linux integer index */
-double lx_fpindex;      /* Linux floating-point index */
-double intindex;        /* Integer index */
-double fpindex;         /* Floating-point index */
+double k6_memindex;     /* AMD K6 Memory index (mainly integer operations) */
+double k6_intindex;     /* AMD K6 Integer index */
+double k6_fpindex;      /* AMD K6 Floating-point index */
+double k7_memindex;     /* AMD K7 Memory index (mainly integer operations) */
+double k7_intindex;     /* AMD K7 Integer index */
+double k7_fpindex;      /* AMD K7 Floating-point index */
 ulong bnumrun;          /* # of runs */
 
 #ifdef MAC
@@ -115,11 +116,12 @@ global_allstats=0;
 global_custrun=0;
 global_align=8;
 write_to_file=0;
-lx_memindex=(double)1.0;        /* set for geometric mean computations */
-lx_intindex=(double)1.0;
-lx_fpindex=(double)1.0;
-intindex=(double)1.0;
-fpindex=(double)1.0;
+k6_memindex=(double)1.0;        /* set for geometric mean computations */
+k6_intindex=(double)1.0;
+k6_fpindex=(double)1.0;
+k7_memindex=(double)1.0;        /* set for geometric mean computations */
+k7_intindex=(double)1.0;
+k7_fpindex=(double)1.0;
 mem_array_ents=0;               /* Nothing in mem array */
 
 /*
@@ -232,9 +234,9 @@ if(global_allstats)
 ** Execute the tests.
 */
 #ifdef LINUX
-output_string("\nTEST                : Iterations/sec.  : Old Index   : New Index\n");
-output_string("                    :                  : Pentium 90* : AMD K6/233*\n");
-output_string("--------------------:------------------:-------------:------------\n");
+output_string("\n");
+output_string("TEST                :       Iterations/sec. :    AMD K6/233* :  AMD K7 1000* \n");
+output_string("--------------------:-----------------------:----------------:---------------\n");
 #endif
 
 for(i=0;i<NUMTESTS;i++)
@@ -251,8 +253,8 @@ for(i=0;i<NUMTESTS;i++)
 		  output_string("                    :");
 		}
 #ifdef LINUX
-                sprintf(buffer," %15.5g  :  %9.2f  :  %9.2f\n",
-                        bmean,bmean/bindex[i],bmean/lx_bindex[i]);
+                sprintf(buffer," %20.5f  :  %12.3f  :  %12.3f\n",
+                        bmean,bmean/k6_bindex[i],bmean/k7_bindex[i]);
 #else
 		sprintf(buffer,"  Iterations/sec.: %13.2f  Index: %6.2f\n",
                         bmean,bmean/bindex[i]);
@@ -262,20 +264,16 @@ for(i=0;i<NUMTESTS;i++)
 		** Gather integer or FP indexes
 		*/
 		if((i==4)||(i==8)||(i==9)){
-		  /* FP index */
-		  fpindex=fpindex*(bmean/bindex[i]);
-		  /* Linux FP index */
-		  lx_fpindex=lx_fpindex*(bmean/lx_bindex[i]);
-		}
-		else{
-		  /* Integer index */
-		  intindex=intindex*(bmean/bindex[i]);
-		  if((i==0)||(i==3)||(i==6)||(i==7))
-		    /* Linux integer index */
-		    lx_intindex=lx_intindex*(bmean/lx_bindex[i]);
-		  else
-		    /* Linux memory index */
-		    lx_memindex=lx_memindex*(bmean/lx_bindex[i]);
+		  k6_fpindex=k6_fpindex*(bmean/k6_bindex[i]);
+		  k7_fpindex=k7_fpindex*(bmean/k7_bindex[i]);
+		} else {
+		  if((i==0)||(i==3)||(i==6)||(i==7)){
+                    k6_intindex=k6_intindex*(bmean/k6_bindex[i]);
+		    k7_intindex=k7_intindex*(bmean/k7_bindex[i]);
+		  } else {
+                    k6_memindex=k6_memindex*(bmean/k6_bindex[i]);
+		    k7_memindex=k7_memindex*(bmean/k7_bindex[i]);
+		  }
 		}
 
                 if(global_allstats)
@@ -303,30 +301,39 @@ for(i=0;i<NUMTESTS;i++)
 */
 if(global_custrun==0)
 {
-        output_string("==========================ORIGINAL BYTEMARK RESULTS==========================\n");
-        sprintf(buffer,"INTEGER INDEX       : %.3f\n",
-                       pow(intindex,(double).142857));
-        output_string(buffer);
-        sprintf(buffer,"FLOATING-POINT INDEX: %.3f\n",
-                        pow(fpindex,(double).33333));
-        output_string(buffer);
-        output_string("Baseline (MSDOS*)   : Pentium* 90, 256 KB L2-cache, Watcom* compiler 10.0\n");
-#ifdef LINUX
-        output_string("==============================LINUX DATA BELOW===============================\n");
-	hardware(write_to_file, global_ofile);
-#include "sysinfoc.c"
+        output_string("=============================================================================\n");
         sprintf(buffer,"MEMORY INDEX        : %.3f\n",
-                       pow(lx_memindex,(double).3333333333));
+                       pow(k6_memindex,(double).3333333333));
         output_string(buffer);
         sprintf(buffer,"INTEGER INDEX       : %.3f\n",
-                       pow(lx_intindex,(double).25));
+                       pow(k6_intindex,(double).25));
         output_string(buffer);
         sprintf(buffer,"FLOATING-POINT INDEX: %.3f\n",
-                        pow(lx_fpindex,(double).3333333333));
+                       pow(k6_fpindex,(double).33333));
         output_string(buffer);
-        output_string("Baseline (LINUX)    : AMD K6/233*, 512 KB L2-cache, gcc 2.7.2.3, libc-5.4.38\n");
+        output_string("Baseline (LINUX)    : AMD K6/233*, 512 KB L2-cache, GCC 2.7.2.3, libc 5.4.38 \n");
+
+        output_string("=============================================================================\n");
+
+        sprintf(buffer,"MEMORY INDEX        : %.3f\n",
+                       pow(k7_memindex,(double).3333333333));
+        output_string(buffer);
+        sprintf(buffer,"INTEGER INDEX       : %.3f\n",
+                       pow(k7_intindex,(double).25));
+        output_string(buffer);
+        sprintf(buffer,"FLOATING-POINT INDEX: %.3f\n",
+                        pow(k7_fpindex,(double).3333333333));
+        output_string(buffer);
+        output_string("Baseline (LINUX)    : AMD K7/1000*, 256 KB L2-cache, GCC 7.4.0, libc6 2.28 \n");
+
+#ifdef LINUX
+        output_string("=============================================================================\n");
+        hardware(write_to_file, global_ofile);
+#include "sysinfoc.c"
 #endif
-output_string("* Trademarks are property of their respective holder.\n");
+
+        output_string("=============================================================================\n");
+        output_string("* Trademarks are property of their respective holder.\n");
 }
 
 exit(0);

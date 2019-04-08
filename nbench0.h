@@ -115,27 +115,11 @@ char *ftestnames[] = {
         "LU DECOMPOSITION" };
 
 /*
-** Indexes -- Baseline is DELL Pentium XP90
-** 11/28/94
-*/
-double bindex[] = {
-    38.993,                     /* Numeric sort */
-    2.238,                      /* String sort */
-    5829704,                    /* Bitfield */
-    2.084,                      /* FP Emulation */
-    879.278,                    /* Fourier */
-    .2628,                      /* Assignment */
-    65.382,                     /* IDEA */
-    36.062,                     /* Huffman */
-    .6225,                      /* Neural Net */
-    19.3031 };                  /* LU Decomposition */
-
-/*
 ** Indices -- Baseline is a AMD K6-233, 32MB RAM (60ns SDRAM),512k L2 cache,
 ** Linux kernel 2.0.32, libc-5.4.38, gcc-2.7.2.3)
 ** Nov/30/97
 */
-double lx_bindex[] = {
+double k6_bindex[] = {
       118.73, 	    /* Numeric sort */
       14.459,	    /* String sort */
     27910000,	    /* Bitfield */
@@ -146,6 +130,24 @@ double lx_bindex[] = {
       112.93,	    /* Huffman */
       1.4799,	    /* Neural Net */
       26.732};      /* LU Decomposition */
+
+
+/*
+** Indices -- Baseline is a AMD K7 (Thunderbird) 1400 @ 1050mHz (10.5*100mHz) (index normalised for 1000mHz), 256K L2 full speed cache,
+** Linux kernel 4.14.111, GNU libc6-2.28, GNU gcc-7.4.0)
+** Apr/07/19
+*/
+double k7_bindex[] = {
+         456.49835 / 1.05,      /* Numeric sort */
+          28.39767 / 1.05,      /* String sort */
+   224538432.79581 / 1.05,      /* Bitfield */
+          61.70076 / 1.05,      /* FP Emulation */
+        8686.83953 / 1.05,      /* Fourier */
+          11.28917 / 1.05,      /* Assignment */
+        2301.20688 / 1.05,      /* IDEA */
+         823.86183 / 1.05,      /* Huffman */
+          14.47989 / 1.05,      /* Neural Net */
+         558.65446 / 1.05};     /* LU Decomposition */
 
 /* Parameter names */
 char *paramnames[]= {
